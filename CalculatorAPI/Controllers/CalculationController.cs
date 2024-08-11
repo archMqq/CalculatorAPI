@@ -33,7 +33,15 @@ namespace CalculatorAPI.Controllers
         [Route("div")]
         public ActionResult<CalculationResult> Div(double a, double b)
         {
-            return new CalculationResult() { Result = _calculatorService.Div(a, b) };
+            try
+            {
+                var result = new CalculationResult() { Result = _calculatorService.Div(a, b) };
+                return result;
+            }
+            catch (DivideByZeroException ex)
+            {
+                return new CalculationResult() { Error = ex.Message };
+            }
         }
 
         [HttpGet]
@@ -54,7 +62,16 @@ namespace CalculatorAPI.Controllers
         [Route("root")]
         public ActionResult<CalculationResult> Root(double numb, double degree)
         {
-            return new CalculationResult() { Result = _calculatorService.Root(numb, degree) };
+            try
+            {
+                var result = new CalculationResult() { Result = _calculatorService.Root(numb, degree) };
+                return result;
+            }
+            catch (ArgumentException ex)
+            {
+                return new CalculationResult() { Error = ex.Message };
+            }
+            
         }
 
         [HttpPost]

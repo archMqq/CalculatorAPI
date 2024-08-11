@@ -30,12 +30,25 @@ namespace CalculatorAPI.Service
         public double Div(double a, double b)
         {
             if (b == 0)
+            {
+                _logger.LogError("Ошибка деления на ноль (0) с числами: {a} и {b}", a, b);
                 throw new DivideByZeroException("Деление на ноль (0) невозможно");
+            }
+                
             return a / b;
         }
         public double Multi(double a, double b) => a * b;
         public double Pow(double numb, double degree) => Math.Pow(numb, degree);
-        public double Root(double numb, double degree) => Math.Pow(numb, 1 / degree);
+        public double Root(double numb, double degree)
+        {
+            if (degree == 0)
+            {
+                _logger.LogError("Ошибка взятия корня с числами: {numb} и {degree}", numb, degree);
+                throw new ArgumentException("Корень по основанию ноль (0) не существует.");
+            }
+                
+            return Math.Pow(numb, 1 / degree);
+        }
         public CalculationResult ExpressionSubstract(string expression)
         {
             try
@@ -47,17 +60,17 @@ namespace CalculatorAPI.Service
             }
             catch (FormatException ex)
             {
-                _logger.LogError(ex, "Format error with {expression}", expression);
+                _logger.LogError(ex, "Ошибка формата с {expression}", expression);
                 return new CalculationResult() { Error = ex.Message };
             }
             catch (EvaluateException ex)
             {
-                _logger.LogError(ex, "Evaluating error with {expression}", expression);
+                _logger.LogError(ex, "Ошибка вычисления с {expression}", expression);
                 return new CalculationResult() { Error = ex.Message };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error with {expression}", expression);
+                _logger.LogError(ex, "Неожиданная ошибка с {expression}", expression);
                 return new CalculationResult() { Error = ex.Message };
             }
         }        
